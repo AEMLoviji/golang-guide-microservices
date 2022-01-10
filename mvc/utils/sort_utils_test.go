@@ -12,7 +12,7 @@ func TestBubbleSortWorstCase(t *testing.T) {
 	els := []int{9, 8, 7, 6, 5}
 
 	// Execution:
-	BubbleSort(els)
+	Sort(els)
 
 	// Validation:
 	assert.NotNil(t, els)
@@ -30,7 +30,7 @@ func TestBubbleSortBestCase(t *testing.T) {
 	els := []int{5, 6, 7, 8, 9}
 
 	// Execution:
-	BubbleSort(els)
+	Sort(els)
 
 	// Validation:
 	assert.NotNil(t, els)
@@ -68,7 +68,7 @@ func TestGetElements(t *testing.T) {
 func BenchmarkBubbleSort10(b *testing.B) {
 	els := getElements(10)
 	for i := 0; i < b.N; i++ {
-		BubbleSort(els)
+		Sort(els)
 	}
 }
 
@@ -82,7 +82,7 @@ func BenchmarkSort10(b *testing.B) {
 func BenchmarkBubbleSort1000(b *testing.B) {
 	els := getElements(1000)
 	for i := 0; i < b.N; i++ {
-		BubbleSort(els)
+		Sort(els)
 	}
 }
 
@@ -96,7 +96,7 @@ func BenchmarkSort1000(b *testing.B) {
 func BenchmarkBubbleSort100000(b *testing.B) {
 	els := getElements(100000)
 	for i := 0; i < b.N; i++ {
-		BubbleSort(els)
+		Sort(els)
 	}
 }
 
