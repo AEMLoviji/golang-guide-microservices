@@ -20,7 +20,7 @@ type Mock struct {
 	Err        error
 }
 
-func getMockId(httpMethod string, url string) string {
+func buildMockId(httpMethod string, url string) string {
 	return fmt.Sprintf("%s_%s", httpMethod, url)
 }
 
@@ -37,23 +37,31 @@ func StopMockups() {
 }
 
 func AddMockup(mock Mock) {
-	mocks[getMockId(mock.HttpMethod, mock.Url)] = &mock
+	mocks[buildMockId(mock.HttpMethod, mock.Url)] = &mock
 }
 
 func Post(url string, body interface{}, headers http.Header) (*http.Response, error) {
 	if enabledMocks {
-		mock := mocks[getMockId(http.MethodPost, url)]
-		if mock == nil {
-			return nil, errors.New("no mockup found for given request")
-		}
-		return mock.Response, mock.Err
+		return runMockHandler(url)
 	}
 
+	return postInternal(url, body, headers)
+}
+
+func runMockHandler(url string) (*http.Response, error) {
+	mock := mocks[buildMockId(http.MethodPost, url)]
+	if mock == nil {
+		return nil, errors.New("no mockup found for given request")
+	}
+	return mock.Response, mock.Err
+}
+
+func postInternal(url string, body interface{}, headers http.Header) (*http.Response, error) {
 	jsonBytes, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(jsonBytes))
+	request, _ := http.NewRequest(http.MethodPost, url, bytes.NewReader(jsonBytes))
 	request.Header = headers
 
 	client := http.Client{}
