@@ -1,4 +1,4 @@
-package githubprovider
+package github_provider
 
 import (
 	"io"

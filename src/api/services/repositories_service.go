@@ -6,7 +6,7 @@ import (
 	"github.com/aemloviji/golang-guide-microservices/src/api/config"
 	"github.com/aemloviji/golang-guide-microservices/src/api/domain/github"
 	"github.com/aemloviji/golang-guide-microservices/src/api/domain/repositories"
-	githubprovider "github.com/aemloviji/golang-guide-microservices/src/api/providers/github_provider"
+	"github.com/aemloviji/golang-guide-microservices/src/api/providers/github_provider"
 	"github.com/aemloviji/golang-guide-microservices/src/api/utils/errors"
 )
 
@@ -36,7 +36,7 @@ func (s *reposService) CreateRepo(input repositories.CreateRepoRequest) (*reposi
 		Private:     false,
 	}
 
-	response, err := githubprovider.CreateRepo(config.GetGithubAccessToken(), request)
+	response, err := github_provider.CreateRepo(config.GetGithubAccessToken(), request)
 	if err != nil {
 		return nil, errors.NewApiError(err.StatusCode, err.Message)
 	}
