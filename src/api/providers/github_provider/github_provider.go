@@ -45,7 +45,7 @@ func CreateRepo(accesToken string, request github.CreateRepoRequest) (*github.Cr
 		if err := json.Unmarshal(bytes, &errResponse); err != nil {
 			return nil, &github.GithubErrorResponse{StatusCode: http.StatusInternalServerError, Message: "invalid json response body"}
 		}
-		// return actual response status code
+		// return actual response status code. Because response body does not contain status code in it's content
 		errResponse.StatusCode = response.StatusCode
 		// Test: #TestCreateRepoUnauthorized
 		return nil, &errResponse
