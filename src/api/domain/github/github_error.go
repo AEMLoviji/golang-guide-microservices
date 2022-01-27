@@ -7,6 +7,10 @@ type GithubErrorResponse struct {
 	Errors           []GithubError `json:"errors"`
 }
 
+func (e GithubErrorResponse) Error() string {
+	return e.Message
+}
+
 type GithubError struct {
 	Resouce string `json:"resouce"`
 	Code    string `json:"code"`

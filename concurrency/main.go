@@ -110,7 +110,7 @@ func handleResults(wg *sync.WaitGroup, input chan createRepoResult) {
 
 func createRepo(wg *sync.WaitGroup, buffer chan bool, output chan createRepoResult, request repositories.CreateRepoRequest) {
 	fmt.Printf("request to Github sent for %q\n", request.Name)
-	result, err := services.RepositoryService.CreateRepo(request)
+	result, err := services.RepositoryService.CreateRepo("your_client_id", request)
 	if err != nil {
 		fmt.Printf("error response from Github for %q and error is %d\n", request.Name, err.Status())
 	} else {

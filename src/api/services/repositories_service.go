@@ -7,6 +7,9 @@ import (
 	"github.com/aemloviji/golang-guide-microservices/src/api/config"
 	"github.com/aemloviji/golang-guide-microservices/src/api/domain/github"
 	"github.com/aemloviji/golang-guide-microservices/src/api/domain/repositories"
+
+	//"github.com/aemloviji/golang-guide-microservices/src/api/log/logger_logrus"
+	"github.com/aemloviji/golang-guide-microservices/src/api/log/logger_zap"
 	"github.com/aemloviji/golang-guide-microservices/src/api/providers/github_provider"
 	"github.com/aemloviji/golang-guide-microservices/src/api/utils/errors"
 )
@@ -14,7 +17,7 @@ import (
 type reposService struct{}
 
 type reposServiceInterface interface {
-	CreateRepo(request repositories.CreateRepoRequest) (*repositories.CreateRepoResponse, errors.ApiError)
+	CreateRepo(clientId string, request repositories.CreateRepoRequest) (*repositories.CreateRepoResponse, errors.ApiError)
 	CreateRepos(request []repositories.CreateRepoRequest) (repositories.CreateReposResponse, errors.ApiError)
 }
 
@@ -26,7 +29,7 @@ func init() {
 	RepositoryService = &reposService{}
 }
 
-func (s *reposService) CreateRepo(input repositories.CreateRepoRequest) (*repositories.CreateRepoResponse, errors.ApiError) {
+func (s *reposService) CreateRepo(clientId string, input repositories.CreateRepoRequest) (*repositories.CreateRepoResponse, errors.ApiError) {
 	if err := input.Validate(); err != nil {
 		return nil, err
 	}
@@ -36,11 +39,27 @@ func (s *reposService) CreateRepo(input repositories.CreateRepoRequest) (*reposi
 		Description: input.Description,
 		Private:     false,
 	}
+	//log_logrus.Info("about to send request to external api", fmt.Sprintf("client_id:%s", clientId), "status:pending")
+	logger_zap.Info("about to send request to external api",
+		logger_zap.Field("client_id", clientId),
+		logger_zap.Field("status", "pending"),
+		logger_zap.Field("authenticated", clientId != ""))
 
 	response, err := github_provider.CreateRepo(config.GetGithubAccessToken(), request)
 	if err != nil {
+		//log_logrus.Error("response obtained from external api", err, fmt.Sprintf("client_id:%s", clientId), "status:error")
+		logger_zap.Error("response obtained from external api", err,
+			logger_zap.Field("client_id", clientId),
+			logger_zap.Field("status", "error"),
+			logger_zap.Field("authenticated", clientId != ""))
 		return nil, errors.NewApiError(err.StatusCode, err.Message)
 	}
+
+	//log_logrus.Info("response obtained from external api", fmt.Sprintf("client_id:%s", clientId), "status:success")
+	logger_zap.Info("response obtained from external api",
+		logger_zap.Field("client_id", clientId),
+		logger_zap.Field("status", "success"),
+		logger_zap.Field("authenticated", clientId != ""))
 
 	result := repositories.CreateRepoResponse{
 		Id:    response.Id,
@@ -106,7 +125,7 @@ func (s *reposService) createRepoConcurrent(input repositories.CreateRepoRequest
 		output <- repositories.CreateRepositoriesResult{Error: err}
 		return
 	}
-	result, err := s.CreateRepo(input)
+	result, err := s.CreateRepo("TODO_client_id", input)
 	if err != nil {
 		output <- repositories.CreateRepositoriesResult{Error: err}
 		return

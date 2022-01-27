@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 func TestCreateRepoInvalidInputName(t *testing.T) {
 	request := repositories.CreateRepoRequest{}
 
-	result, err := RepositoryService.CreateRepo(request)
+	result, err := RepositoryService.CreateRepo("client_id", request)
 
 	assert.Nil(t, result)
 	assert.NotNil(t, err)
@@ -42,7 +42,7 @@ func TestCreateRepoErrorFromGithub(t *testing.T) {
 	})
 	request := repositories.CreateRepoRequest{Name: "testing"}
 
-	result, err := RepositoryService.CreateRepo(request)
+	result, err := RepositoryService.CreateRepo("client_id", request)
 
 	assert.Nil(t, result)
 	assert.NotNil(t, err)
@@ -62,7 +62,7 @@ func TestCreateRepoNoError(t *testing.T) {
 	})
 	request := repositories.CreateRepoRequest{Name: "testing"}
 
-	result, err := RepositoryService.CreateRepo(request)
+	result, err := RepositoryService.CreateRepo("client_id", request)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, result)
